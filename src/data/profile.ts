@@ -9,6 +9,7 @@ export interface ProfileInfo {
   intro: string;
   email: string;
   phone: string;
+  location: string;
   links: {
     linkedin: string;
     github: string;
@@ -40,6 +41,7 @@ export const profile: ProfileInfo = {
     "Computer Science (AI) graduate with hands-on experience in Java, Spring Boot, RESTful APIs, React.js, SQL, and Object-Oriented Programming. Skilled in developing scalable full-stack applications, integrating frontend and backend components, and building database-driven solutions using Hibernate and Spring Data JPA. Strong foundation in application debugging, reusable components, and maintainable code, with 350+ coding problems solved.",
   email: "adityapersharma@gmail.com",
   phone: "+91 9675443277",
+  location: "Gurugram, Haryana, India",
   links: {
     linkedin: "https://www.linkedin.com/in/adityasharma1305/",
     github: "https://github.com/AdityaSharma1305",

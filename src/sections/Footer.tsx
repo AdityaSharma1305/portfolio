@@ -1,8 +1,18 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { profile } from "../data/profile";
 import { sound } from "../utils/sound";
-import { Mail, RotateCcw, ArrowUp, Send } from "lucide-react";
+import {
+  Mail,
+  RotateCcw,
+  ArrowUp,
+  Send,
+  Phone,
+  MapPin,
+  Copy,
+  Check,
+  ExternalLink
+} from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "../components/Icons";
 
 interface FooterProps {
@@ -11,6 +21,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
   const containerRef = useRef<HTMLElement>(null);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -20,34 +31,63 @@ export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
   const letterSpacing = useTransform(scrollYProgress, [0, 1], ["0.4em", "0.02em"]);
   const titleOpacity = useTransform(scrollYProgress, [0.1, 0.9], [0.3, 1]);
 
-  const socialLinks = [
+  const copyToClipboard = (text: string, key: string) => {
+    sound.playClick();
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2200);
+  };
+
+  const contactCards = [
     {
-      label: "Let's Build",
-      href: `mailto:${profile.email}?subject=${encodeURIComponent("Let's build something")}`,
-      primary: true,
-      icon: Send,
-      cursor: "play"
-    },
-    {
-      label: "LinkedIn",
-      href: profile.links.linkedin,
-      primary: false,
-      icon: LinkedinIcon,
-      cursor: "link"
-    },
-    {
-      label: "GitHub",
-      href: profile.links.github,
-      primary: false,
-      icon: GithubIcon,
-      cursor: "link"
-    },
-    {
-      label: "Email",
-      href: `mailto:${profile.email}`,
-      primary: false,
+      key: "email",
+      label: "Email Direct",
+      value: profile.email,
+      subtext: "Best for opportunities & technical inquiries",
       icon: Mail,
-      cursor: "link"
+      href: `mailto:${profile.email}`,
+      actionType: "mail",
+      canCopy: true
+    },
+    {
+      key: "phone",
+      label: "Direct Phone",
+      value: profile.phone,
+      subtext: "Call / WhatsApp (IST Timezone)",
+      icon: Phone,
+      href: `tel:${profile.phone.replace(/\s+/g, "")}`,
+      actionType: "call",
+      canCopy: true
+    },
+    {
+      key: "linkedin",
+      label: "LinkedIn",
+      value: "adityasharma1305",
+      subtext: "Professional network & messaging",
+      icon: LinkedinIcon,
+      href: profile.links.linkedin,
+      actionType: "link",
+      canCopy: false
+    },
+    {
+      key: "github",
+      label: "GitHub",
+      value: "AdityaSharma1305",
+      subtext: "Repositories, commits & codebases",
+      icon: GithubIcon,
+      href: profile.links.github,
+      actionType: "link",
+      canCopy: false
+    },
+    {
+      key: "location",
+      label: "Current Location",
+      value: profile.location,
+      subtext: "Open to In-Office, Hybrid & Remote opportunities",
+      icon: MapPin,
+      href: "https://maps.google.com/?q=Gurugram,+Haryana,+India",
+      actionType: "map",
+      canCopy: false
     }
   ];
 
@@ -75,7 +115,7 @@ export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
       >
-        The Next Episode
+        Season Finale • Direct Line
       </motion.p>
 
       {/* Title */}
@@ -92,7 +132,7 @@ export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
 
       {/* Identity Subtitle */}
       <motion.div
-        className="relative mt-12"
+        className="relative mt-8 max-w-2xl text-center"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -104,41 +144,104 @@ export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
         <p className="mt-2 text-xs font-semibold tracking-[0.4em] text-mist sm:text-sm uppercase">
           {profile.role}
         </p>
+        <p className="mt-4 text-sm text-smoke font-light leading-relaxed">
+          Ready to engineer high-performance backends, clean modern frontends, and reliable software. Reach out directly via phone, email, or social profiles below.
+        </p>
       </motion.div>
 
-      {/* Action Links */}
+      {/* Primary Streaming CTA */}
       <motion.div
-        className="relative mt-10 flex flex-wrap justify-center gap-3 sm:gap-4 max-w-xl"
+        className="relative mt-8"
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+      >
+        <a
+          href={`mailto:${profile.email}?subject=${encodeURIComponent("Inquiry for Aditya Sharma • Full-Stack Developer")}`}
+          data-cursor="play"
+          onClick={() => sound.playClick()}
+          className="inline-flex min-h-13 items-center gap-3 rounded-full bg-crimson px-8 py-3.5 text-sm font-bold tracking-[0.14em] uppercase text-white shadow-[0_0_50px_rgba(229,19,43,0.6)] transition hover:bg-crimson-2 hover:scale-105 active:scale-95"
+        >
+          <Send className="h-4 w-4" />
+          Start a Conversation
+        </a>
+      </motion.div>
+
+      {/* Detailed Contact Cards Grid */}
+      <motion.div
+        className="relative mt-12 grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 text-left"
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        variants={{ show: { transition: { staggerChildren: 0.08, delayChildren: 0.3 } } }}
+        variants={{ show: { transition: { staggerChildren: 0.08, delayChildren: 0.25 } } }}
       >
-        {socialLinks.map((item) => {
-          const Icon = item.icon;
+        {contactCards.map((card) => {
+          const Icon = card.icon;
+          const isCopied = copiedKey === card.key;
+
           return (
             <motion.div
-              key={item.label}
+              key={card.key}
               variants={{
-                hidden: { opacity: 0, y: 20 },
+                hidden: { opacity: 0, y: 24 },
                 show: { opacity: 1, y: 0 }
               }}
+              className="group relative flex flex-col justify-between rounded-xl border border-white/10 bg-ink-2/80 p-5 backdrop-blur-md transition-all hover:border-crimson/50 hover:bg-ink-2 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
             >
-              <a
-                href={item.href}
-                target={item.href.startsWith("http") ? "_blank" : undefined}
-                rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                data-cursor={item.cursor}
-                onClick={() => sound.playClick()}
-                className={`flex min-h-12 items-center gap-2.5 rounded-full px-7 text-xs font-bold tracking-[0.14em] uppercase transition hover:scale-105 ${
-                  item.primary
-                    ? "bg-crimson text-white shadow-[0_0_50px_rgba(229,19,43,0.55)] hover:bg-crimson-2"
-                    : "border border-white/20 text-bone hover:border-white hover:bg-white/10"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </a>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-mist">
+                    <Icon className="h-3.5 w-3.5 text-crimson-2" />
+                    {card.label}
+                  </span>
+                  {card.canCopy && (
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(card.value, card.key)}
+                      title="Copy to clipboard"
+                      className="rounded-md border border-white/10 p-1 text-smoke transition hover:border-white/30 hover:text-bone hover:bg-white/5"
+                    >
+                      {isCopied ? (
+                        <Check className="h-3 w-3 text-emerald-400" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                <a
+                  href={card.href}
+                  target={card.href.startsWith("http") ? "_blank" : undefined}
+                  rel={card.href.startsWith("http") ? "noreferrer" : undefined}
+                  onClick={() => sound.playClick()}
+                  className="mt-3 block font-mono text-sm font-semibold text-bone hover:text-crimson-2 transition break-all"
+                >
+                  {card.value}
+                </a>
+
+                <p className="mt-1 text-xs text-smoke font-light leading-snug">
+                  {card.subtext}
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-medium text-smoke group-hover:text-mist">
+                <a
+                  href={card.href}
+                  target={card.href.startsWith("http") ? "_blank" : undefined}
+                  rel={card.href.startsWith("http") ? "noreferrer" : undefined}
+                  onClick={() => sound.playClick()}
+                  className="inline-flex items-center gap-1.5 hover:text-crimson-2 transition"
+                >
+                  <span>Connect</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                {isCopied && (
+                  <span className="text-[10px] font-semibold text-emerald-400 tracking-wider uppercase">
+                    Copied!
+                  </span>
+                )}
+              </div>
             </motion.div>
           );
         })}
@@ -152,7 +255,7 @@ export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
             sound.playClick();
             onReplay();
           }}
-          className="flex items-center gap-2 rounded-full bg-white/5 border border-white/15 px-4 py-2 text-xs font-medium text-mist hover:text-bone hover:bg-white/10 transition"
+          className="flex items-center gap-2 rounded-full bg-white/5 border border-white/15 px-5 py-2.5 text-xs font-medium text-mist hover:text-bone hover:bg-white/10 transition"
         >
           <RotateCcw className="h-3.5 w-3.5 text-crimson-2" />
           Replay Series Intro
@@ -162,7 +265,7 @@ export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll back to top"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 border border-white/15 text-mist hover:text-bone hover:bg-white/10 transition"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/15 text-mist hover:text-bone hover:bg-white/10 transition"
         >
           <ArrowUp className="h-4 w-4" />
         </button>
@@ -172,9 +275,13 @@ export const Footer: React.FC<FooterProps> = ({ onReplay }) => {
       <div className="relative mt-12 text-xs text-smoke font-light tracking-wide">
         <p>© 2026 Aditya Sharma • A Streaming Platform Experience</p>
         <p className="mt-1 text-[11px] text-smoke/70">
+          Gurugram, Haryana • adityapersharma@gmail.com • +91 9675443277
+        </p>
+        <p className="mt-0.5 text-[10px] text-smoke/50">
           Engineered with React, TypeScript &amp; Tailwind CSS • Deployed on Vercel
         </p>
       </div>
     </footer>
   );
 };
+
