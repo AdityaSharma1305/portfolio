@@ -24,7 +24,7 @@ export const ProfileAvatar: React.FC<{ id: string; size?: "sm" | "lg" }> = ({
         style={{ background: "radial-gradient(circle at 50% 30%, #7a0f24, #1a0509)" }}
       >
         <img
-          src={profile.portrait.src}
+          src="/images/portrait-420.webp"
           alt={profile.displayName}
           className="absolute inset-x-0 bottom-0 mx-auto h-[115%] w-auto max-w-none object-cover object-top"
         />

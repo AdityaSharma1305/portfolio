@@ -46,8 +46,8 @@ export const profile: ProfileInfo = {
   },
   resumePdf: "/resume.pdf",
   portrait: {
-    src: "/assets/portrait-720.webp",
-    srcSet: "/assets/portrait-420.webp 420w, /assets/portrait-720.webp 720w, /assets/portrait-1100.webp 1100w",
+    src: "/images/portrait-720.webp",
+    srcSet: "/images/portrait-420.webp 420w, /images/portrait-720.webp 720w, /images/portrait-1100.webp 1100w",
     alt: "Portrait of Aditya Sharma"
   },
   interests: [
